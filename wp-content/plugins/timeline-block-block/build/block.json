@@ -1,0 +1,205 @@
+{
+  "apiVersion": 3,
+  "name": "tlgb/b-timeline-block",
+  "title": "Timeline Block",
+  "version": "1.5.3",
+  "description": "Show your story or Memories on the web.",
+  "category": "widgets",
+  "keywords": [
+    "timeline",
+    "timeline-block",
+    "animation-timeline",
+    "timeline-builder",
+    "timeline-plugin",
+    "timeline-shortcode",
+    "timeline-vertical",
+    "timeline-horizontal",
+    "progress-timeline",
+    "timeline-blocks",
+    "ai-timeline"
+  ],
+  "textdomain": "timeline-block",
+  "attributes": {
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "timelines": {
+      "type": "array",
+      "default": [
+        {
+          "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'><path d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64h98.2V334.2H109.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H255V480H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z'/></svg>",
+          "date": "2002",
+          "label": "January",
+          "description": "Note of the january month",
+          "isAddTinyEditor": false
+        },
+        {
+          "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' id='instagram'><path d='M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334'/></svg>",
+          "date": "2003",
+          "label": "February",
+          "description": "Note of the February month",
+          "isAddTinyEditor": false
+        },
+        {
+          "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'><path d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM351.3 199.3v0c0 86.7-66 186.6-186.6 186.6c-37.2 0-71.7-10.8-100.7-29.4c5.3 .6 10.4 .8 15.8 .8c30.7 0 58.9-10.4 81.4-28c-28.8-.6-53-19.5-61.3-45.5c10.1 1.5 19.2 1.5 29.6-1.2c-30-6.1-52.5-32.5-52.5-64.4v-.8c8.7 4.9 18.9 7.9 29.6 8.3c-9-6-16.4-14.1-21.5-23.6s-7.8-20.2-7.7-31c0-12.2 3.2-23.4 8.9-33.1c32.3 39.8 80.8 65.8 135.2 68.6c-9.3-44.5 24-80.6 64-80.6c18.9 0 35.9 7.9 47.9 20.7c14.8-2.8 29-8.3 41.6-15.8c-4.9 15.2-15.2 28-28.8 36.1c13.2-1.4 26-5.1 37.8-10.2c-8.9 13.1-20.1 24.7-32.9 34c.2 2.8 .2 5.7 .2 8.5z'/></svg>",
+          "date": "2004",
+          "label": "March",
+          "description": "Note of the March month",
+          "isAddTinyEditor": false
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "default": "vertical"
+    },
+    "itemPosition": {
+      "type": "string",
+      "default": "right"
+    },
+    "labelLocation": {
+      "type": "string",
+      "default": "right"
+    },
+    "startIndex": {
+      "type": "number",
+      "default": 1
+    },
+    "visibleItems": {
+      "type": "number",
+      "default": 4
+    },
+    "vigibleItems": {
+      "type": "number",
+      "default": 4
+    },
+    "moveItem": {
+      "type": "number",
+      "default": 2
+    },
+    "verticalTrigger": {
+      "type": "string",
+      "default": "150px"
+    },
+    "rtlMode": {
+      "type": "boolean",
+      "default": false
+    },
+    "barBackground": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "barDotColor": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "itemBg": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "itemColor": {
+      "type": "string",
+      "default": "#333333"
+    },
+    "itemTypo": {
+      "type": "object",
+      "default": {
+        "fontSize": {
+          "desktop": 14,
+          "tablet": 14,
+          "mobile": 14
+        }
+      }
+    },
+    "horizontalDatePosition": {
+      "type": "string",
+      "default": "bottom"
+    },
+    "itemBorder": {
+      "type": "object",
+      "default": {
+        "width": "1px",
+        "color": "#cccccc"
+      }
+    },
+    "contentBorder": {
+      "type": "object",
+      "default": {
+        "width": "1px",
+        "style": "solid",
+        "color": "#72aee6"
+      }
+    },
+    "labelTypo": {
+      "type": "object",
+      "default": {
+        "fontSize": {
+          "desktop": 16,
+          "tablet": 16,
+          "mobile": 16
+        }
+      }
+    },
+    "labelColor": {
+      "type": "string",
+      "default": "#222222"
+    },
+    "theme": {
+      "type": "string",
+      "default": "default"
+    },
+    "timelineBar": {
+      "type": "object",
+      "default": {
+        "width": "3px",
+        "dotSize": 20,
+        "progressBarbgColor": {
+          "color": "linear-gradient(to bottom, #ff6a00, #ee0979)"
+        }
+      }
+    },
+    "dateStyles": {
+      "type": "object",
+      "default": {
+        "dateTypo": {
+          "fontSize": {
+            "desktop": 14,
+            "tablet": 14,
+            "mobile": 14
+          }
+        },
+        "dateColor": "black",
+        "dateContainerSize": 50,
+        "dateBg": {
+          "color": "#06b6d4"
+        }
+      }
+    }
+  },
+  "supports": {
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false
+  },
+  "example": {
+    "attributes": {
+      "preview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./view.css",
+    "tlgb-timeline-css"
+  ],
+  "render": "file:./render.php",
+  "viewScript": [
+    "file:./view.js",
+    "tlgb-timeline-js",
+    "react",
+    "react-dom"
+  ]
+}

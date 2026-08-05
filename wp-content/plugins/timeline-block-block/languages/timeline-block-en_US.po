@@ -1,0 +1,135 @@
+# Copyright (C) 2026 bPlugins
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Timeline Block - Beautiful Timeline Builder 1.5.3\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/timeline-block-block\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-09T05:18:58+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: timeline-block\n"
+
+#. Plugin Name of the plugin
+#: plugin.php
+msgid "Timeline Block - Beautiful Timeline Builder"
+msgstr ""
+
+#. Description of the plugin
+#: plugin.php
+msgid "Display timeline content on your site."
+msgstr ""
+
+#. Author of the plugin
+#: plugin.php
+msgid "bPlugins"
+msgstr ""
+
+#. Author URI of the plugin
+#: plugin.php
+msgid "https://bplugins.com"
+msgstr ""
+
+#: includes/class-tlgb-admin.php:14
+#: includes/class-tlgb-admin.php:15
+msgid "Help & Demos"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:16
+msgid "Timeline Block"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:17
+#: includes/class-tlgb-cpt.php:25
+msgid "Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:18
+msgid "Add New"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:19
+msgid "Add New Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:20
+msgid "New Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:21
+msgid "Edit Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:22
+msgid "No timelines found. Add one to get started."
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:23
+msgid "Search Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:24
+msgid "View Timeline"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:26
+msgid "Timeline Block ShortCodes"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:27
+msgid "No Timeline found in trash"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:28
+msgid "Timeline updated"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:45
+msgid "ShortCode"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:46
+msgid "Date"
+msgstr ""
+
+#: includes/class-tlgb-cpt.php:54
+#: build/column.js:1
+msgid "Copy To Clipboard"
+msgstr ""
+
+#: includes/class-tlgb-main.php:30
+msgid "Invalid timeline ID."
+msgstr ""
+
+#: includes/class-tlgb-main.php:36
+#: includes/class-tlgb-main.php:43
+msgid "Timeline not found."
+msgstr ""
+
+#: includes/class-tlgb-main.php:49
+msgid "No timeline content found."
+msgstr ""
+
+#: includes/class-tlgb-main.php:58
+msgid "Timeline block not found in this post."
+msgstr ""
+
+#: includes/class-tlgb-options.php:31
+msgid "Permission denied."
+msgstr ""
+
+#: includes/class-tlgb-options.php:41
+msgid "All plugin data will be deleted when uninstalled."
+msgstr ""
+
+#: includes/class-tlgb-options.php:42
+msgid "Plugin data will be preserved when uninstalled."
+msgstr ""
+
+#: build/column.js:1
+msgid "Copied!"
+msgstr ""
