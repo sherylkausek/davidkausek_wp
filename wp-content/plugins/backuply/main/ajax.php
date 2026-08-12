@@ -51,6 +51,7 @@ add_action('wp_ajax_backuply_close_litespeed_notice', 'backuply_close_litespeed_
 add_action('wp_ajax_backuply_close_update_notice', 'backuply_close_update_notice');
 add_action('wp_ajax_backuply_trial_promo', 'backuply_close_trial_promo');
 add_action('wp_ajax_backuply_do_diagnosis', 'backuply_do_diagnosis');
+add_action('wp_ajax_backuply_scan_fix_noabort', 'backuply_scan_fix_noabort');
 add_action('wp_ajax_backuply_load_debug', 'backuply_load_debug');
 
 // Backuply CLoud
@@ -1332,6 +1333,31 @@ function backuply_do_diagnosis(){
 	wp_send_json_error(array(
 		'message' => __('Diagnosis Failed: Unexpected response from server. Possible interference detected.', 'backuply'),
 		'is_cloudflare' => $is_cloudflare
+	));
+}
+
+// Scans the root .htaccess for the noabort rule and adds it if missing.
+function backuply_scan_fix_noabort(){
+
+	// Verify nonce and capability
+	backuply_ajax_nonce_verify();
+
+	$result = backuply_add_litespeed_noabort();
+
+	// The function is the single source of message and type
+	$type    = !empty($result['type']) ? $result['type'] : 'error';
+	$message = !empty($result['message']) ? $result['message'] : __('Unexpected response.', 'backuply');
+
+	if($type === 'success'){
+		wp_send_json_success(array(
+			'message' => $message,
+			'type'    => $type,
+		));
+	}
+
+	wp_send_json_error(array(
+		'message' => $message,
+		'type'    => $type,
 	));
 }
 

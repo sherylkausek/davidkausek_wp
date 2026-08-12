@@ -67,6 +67,52 @@ jQuery(document).ready(function(){
 		});
 	});
 		
+	// Scan .htaccess for the LiteSpeed noabort rule and add it if missing.
+	jQuery('.backuply-noabort-scan').on('click', function(){
+		var $result = jQuery('.backuply-noabort-result');
+		var $button = jQuery(this);
+
+		$button.prop('disabled', true);
+		$result.text('Checking...').show().css({
+			'background-color': '#d1ecf1',
+			'border-color': '#bee5eb',
+			'color': '#0c5460'
+		});
+
+		jQuery.ajax({
+			url: backuply_obj.ajax_url,
+			method: 'POST',
+			data: {
+				action: 'backuply_scan_fix_noabort',
+				security: backuply_obj.nonce
+			},
+			success: function(response) {
+				$button.prop('disabled', false);
+
+				var type = (response.data && response.data.type) ? response.data.type : (response.success ? 'success' : 'error');
+				var isInfo = response.info === true || type === 'info';
+				var effectiveType = isInfo ? 'info' : type;
+
+				var styles = {
+					'info':    {'background-color': '#d1ecf1', 'border-color': '#bee5eb', 'color': '#0c5460'},
+					'success': {'background-color': '#d4edda', 'border-color': '#c3e6cb', 'color': '#155724'},
+					'error':   {'background-color': '#f8d7da', 'border-color': '#f5c6cb', 'color': '#721c24'}
+				};
+
+				var message = response.data && response.data.message ? response.data.message : '';
+				$result.html('<p>' + message + '</p>').css(styles[effectiveType] || styles.error);
+			},
+			error: function() {
+				$button.prop('disabled', false);
+				$result.text('Failed to connect to server.').css({
+					'background-color': '#f8d7da',
+					'border-color': '#f5c6cb',
+					'color': '#721c24'
+				});
+			}
+		});
+	});
+	
 	// To Copy text on click
 	jQuery('.backuply-code-copy').click( function() {
 		navigator.clipboard.writeText(jQuery(this).parent().find('.backuply-code-text').text().trim());
@@ -891,7 +937,7 @@ function checkprotocol(is_edit = false){
 		backuply_toggle_bcloud();
 	}
 
-	if(jQuery(protocol_id).val() == 'gdrive' || jQuery(protocol_id).val() == 'onedrive'){
+	if(jQuery(protocol_id).val() == 'gdrive' || jQuery(protocol_id).val() == 'onedrive' || jQuery(protocol_id).val() == 'pcloud'){
 		hide_ftp();
 		hide_aws_s3bucket();
 		hide_dropbox();

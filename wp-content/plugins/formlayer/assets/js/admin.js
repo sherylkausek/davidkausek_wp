@@ -250,6 +250,17 @@ jQuery(document).ready(function($){
 				subject: 'New Form Submission',
 				message: 'You have a new submission:\n\n{all_fields}'
 			},
+			email_confirmation: {
+				enabled: false,
+				to_email: '',
+				reply_to: '{admin_email}',
+				from_name: 'FormLayer',
+				from_email: '{admin_email}',
+				bcc: '',
+				subject: 'Thank you for your submission!',
+				message: 'Thank you! We have received your submission:\n\n{all_fields}',
+				format: 'html'
+			},
 			confirmations: {
 				type: 'message',
 				message: 'Thank you for your submission!',
@@ -565,17 +576,19 @@ jQuery(document).ready(function($){
 			case 'password':
 				return `<input type="password" placeholder="${field.placeholder || '********'}" disabled>`;
 			case 'terms':
+				const t_label_style = field.style_label_color ? `style="color:${field.style_label_color};"` : '';
 				return `
 					<div class="formlayer-terms-wrap">
 						<input type="checkbox" disabled> 
-						<span class="formlayer-terms-label">${field.terms_label || 'I agree to the <a href="#">Terms & Conditions</a>'}</span>
+						<span class="formlayer-terms-label" ${t_label_style}>${field.terms_label || 'I agree to the <a href="#">Terms & Conditions</a>'}</span>
 					</div>`;
 			case 'gdpr':
+				const g_label_style = field.style_label_color ? `style="font-size:14px; color:${field.style_label_color};"` : 'style="font-size:14px; color:#475569;"';
 				return `
 					<div class="formlayer-gdpr-wrap">
 						<input type="checkbox" disabled> 
 						<div style="line-height:1.4;">
-							<div class="formlayer-gdpr-label" style="font-size:14px; color:#475569;">${field.gdpr_label || 'Accept GDPR Policy'}</div>
+							<div class="formlayer-gdpr-label" ${g_label_style}>${field.gdpr_label || 'Accept GDPR Policy'}</div>
 							${field.gdpr_description ? `<div style="color:#64748b; font-size:12px; margin-top:4px;">${field.gdpr_description}</div>` : ''}
 						</div>
 					</div>`;
@@ -631,11 +644,7 @@ jQuery(document).ready(function($){
 			case 'number':
 				return `<input type="number" placeholder="${field.placeholder || ''}" min="${field.min || ''}" max="${field.max || ''}" disabled>`;
 			case 'phone':
-				return `
-				<div class="formlayer-input-icon-wrap" style="position:relative;">
-					<span class="dashicons dashicons-phone" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:18px;"></span>
-					<input type="tel" placeholder="${field.placeholder || 'Phone Number'}" style="padding-left:40px !important;" disabled>
-				</div>`;
+				return `<input type="tel" placeholder="${field.placeholder || 'Phone Number'}" disabled>`;
 			case 'mask':
 				return `<input type="text" placeholder="${field.placeholder || '(+1) 000-0000'}" disabled>`;
 			case 'country':
@@ -770,7 +779,7 @@ jQuery(document).ready(function($){
 		});
 
 		// Placeholder
-		if(['text', 'email', 'number', 'textarea', 'password', 'url', 'address', 'tel', 'mask', 'country'].includes(field.type)){
+		if(['text', 'email', 'number', 'textarea', 'password', 'url', 'address', 'tel', 'mask', 'country', 'phone'].includes(field.type)){
 			general_content += utils.tmpl('control_group', {
 				label: 'Placeholder',
 				input_html: `<input type="text" class="formlayer-input-full" data-prop="placeholder" value="${field.placeholder || ''}" placeholder="${field.type === 'country' ? 'Select Country' : 'Placeholder text'}">`
@@ -1054,6 +1063,8 @@ jQuery(document).ready(function($){
 		$('#form-setting-notif-subject').val(s.notifications.subject);
 		$('#form-setting-notif-format').val(s.notifications.format || 'html').trigger('change');
 		$('#form-setting-notif-message').val(s.notifications.message);
+
+		$(document).trigger('formlayer_sync_settings_to_ui', [s, state.fields]);
 		$('#form-setting-conf-type').val(s.confirmations.type).trigger('change');
 		$('#form-setting-conf-message').val(s.confirmations.message);
 		$('#form-setting-conf-url').val(s.confirmations.redirect_url);
@@ -1104,6 +1115,8 @@ jQuery(document).ready(function($){
 		state.form_settings.notifications.subject = $('#form-setting-notif-subject').val();
 		state.form_settings.notifications.format = $('#form-setting-notif-format').val();
 		state.form_settings.notifications.message = $('#form-setting-notif-message').val();
+
+		$(document).trigger('formlayer_sync_ui_to_settings', [state.form_settings]);
 		state.form_settings.confirmations.type = $('#form-setting-conf-type').val();
 		state.form_settings.confirmations.message = $('#form-setting-conf-message').val();
 		state.form_settings.confirmations.redirect_url = $('#form-setting-conf-url').val();
@@ -1538,6 +1551,81 @@ jQuery(document).ready(function($){
 		}else{
 			$(`#${slug}-integration-fields`).hide();
 		}
+	});
+
+	// Migration Feature
+	$('#formlayer-migration-source').on('change', function(){
+		let source = $(this).val();
+		if(!source){
+			$('#formlayer-migration-forms-container').hide();
+			return;
+		}
+
+		$('#formlayer-migration-forms-list').html('<div style="padding:15px; color:#64748b;">Loading forms...</div>');
+		$('#formlayer-migration-forms-container').show();
+		$('#formlayer-btn-run-migration').prop('disabled', true);
+
+		$.get(formlayer_admin.ajax_url, {
+			action: 'formlayer_get_migration_source_forms',
+			source: source,
+			nonce: formlayer_admin.nonce
+		}, function(response){
+			if(response.success && response.data.forms.length > 0){
+				let html = '';
+				response.data.forms.forEach(function(f){
+					html += `
+					<label style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; user-select: none;">
+						<input type="checkbox" class="formlayer-migration-cb" value="${f.id}" style="margin: 0; width: 16px; height: 16px; accent-color: #3b82f6;">
+						<span style="font-weight: 600; color: #334155; font-size: 13px;">${f.title}</span>
+						<span style="color: #64748b; font-size: 11px; margin-left: auto; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">ID: #${f.id}</span>
+					</label>`;
+				});
+				$('#formlayer-migration-forms-list').html(html);
+				$('#formlayer-btn-run-migration').prop('disabled', false);
+			} else {
+				$('#formlayer-migration-forms-list').html('<div style="padding:15px; color:#ef4444;">No forms found or plugin not active.</div>');
+			}
+		});
+	});
+
+	$('#formlayer-btn-run-migration').on('click', function(e){
+		e.preventDefault();
+		let source = $('#formlayer-migration-source').val();
+		let ids = $('.formlayer-migration-cb:checked').map(function(){ return $(this).val(); }).get();
+
+		if(ids.length === 0){
+			alert('Please select at least one form to migrate.');
+			return;
+		}
+
+		let $btn = $(this);
+		let originalHtml = $btn.html();
+		$btn.prop('disabled', true).html('<span class="dashicons dashicons-update" style="animation: fl_spin 1s linear infinite; margin-top:2px;"></span> Migrating...');
+
+		$('#formlayer-migration-status').hide().removeClass('notice-success notice-error').html('');
+
+		$.post(formlayer_admin.ajax_url, {
+			action: 'formlayer_run_form_migration',
+			source: source,
+			form_ids: ids,
+			nonce: formlayer_admin.nonce
+		}, function(response){
+			$btn.prop('disabled', false).html(originalHtml);
+			if(response.success){
+				let result = response.data;
+				let msg = `<p style="font-weight: 600; color: #15803d; margin: 0 0 10px 0;">Successfully migrated ${result.migrated_count} form(s)!</p><ul style="margin: 0; padding-left: 20px; list-style-type: disc;">`;
+				result.migrated_list.forEach(function(f){
+					msg += `<li><strong style="color:#0f172a;">${f.title}</strong> - <a href="${formlayer_admin.admin_page_url}&action=edit&form_id=${f.id}" style="color:#3b82f6; text-decoration:underline; font-weight:600;">Edit Migrated Form</a></li>`;
+				});
+				msg += '</ul>';
+				$('#formlayer-migration-status').removeClass().css({background:'#f0fdf4', borderLeft:'4px solid #22c55e', color: '#166534'}).html(msg).show();
+				
+				// Uncheck source list
+				$('.formlayer-migration-cb').prop('checked', false);
+			} else {
+				$('#formlayer-migration-status').removeClass().css({background:'#fef2f2', borderLeft:'4px solid #ef4444', color: '#991b1b'}).html(`<p style="margin:0;">${response.data.message || 'Migration failed.'}</p>`).show();
+			}
+		});
 	});
 
 	// Initialize

@@ -59,10 +59,11 @@ class Admin{
 		\FormLayer\Settings\UI::support_tab();
 		echo'</div>';
 
+		echo'<div id="formlayer-tab-tools" class="formlayer-tab-content" style="display:none;">';
+		do_action('formlayer_render_tools_tab');
+		echo'</div>';
+
 		if(defined('FORMLAYER_PRO_VERSION')){
-			echo'<div id="formlayer-tab-tools" class="formlayer-tab-content" style="display:none;">';
-			do_action('formlayer_render_tools_tab');
-			echo'</div>';
 			echo '<div id="formlayer-tab-license" class="formlayer-tab-content" style="display:none;">';
 			do_action('formlayer_render_license_page');
 			echo '</div>';

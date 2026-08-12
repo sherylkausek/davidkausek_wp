@@ -32,9 +32,7 @@ class UI{
 					self::tab_item('entries', 'Entries' . $unread_badge, '<span class="dashicons dashicons-database-view"></span>');
 					self::tab_item('reports', 'Reports', '<span class="dashicons dashicons-chart-bar"></span>');
 					self::tab_item('integrations', 'Integrations', '<span class="dashicons dashicons-admin-links"></span>');
-					if(defined('FORMLAYER_PRO_VERSION')){
-						self::tab_item('tools', 'Tools', '<span class="dashicons dashicons-migrate"></span>');
-					}
+					self::tab_item('tools', 'Tools', '<span class="dashicons dashicons-migrate"></span>');
 					self::tab_item('settings', 'Settings', '<span class="dashicons dashicons-admin-settings"></span>');
 					self::tab_item('support', 'Support', '<span class="dashicons dashicons-sos"></span>');
 					if (defined('FORMLAYER_PRO_VERSION')) {
@@ -571,6 +569,9 @@ class UI{
 							<li class="active" data-section="notifications">
 								<span class="dashicons dashicons-email"></span>' . esc_html__('Email Notifications', 'formlayer') . '
 							</li>
+							<li data-section="email_confirmation">
+								<span class="dashicons dashicons-email-alt"></span>' . esc_html__('Email Confirmation', 'formlayer') . '
+							</li>
 							<li data-section="confirmations">
 								<span class="dashicons dashicons-yes"></span>' . esc_html__('Form Confirmations', 'formlayer') . '
 							</li>
@@ -645,7 +646,28 @@ class UI{
 							</div>
 						</div>
 
-						<!-- Confirmations Section -->
+						<!-- Email Confirmation Section -->
+						<div class="formlayer-settings-section" id="formlayer-settings-email_confirmation" style="display:none;">
+							<div class="section-header">
+								<h3>' . esc_html__('Email Confirmation', 'formlayer') . '</h3>
+								<p>' . esc_html__('Send an automatic confirmation email to the person who submitted the form.', 'formlayer') . '</p>
+							</div>';
+
+							if(defined("FORMLAYER_PRO_VERSION")){
+								do_action('formlayer_render_email_confirmation');
+							} else {
+								echo'<div class="formlayer-pro-lock-pane formlayer-pro-lock-pane-wrap">
+									<div class="formlayer-pro-lock-icon-box">
+										<span class="dashicons dashicons-lock" style="font-size:32px; height:32px; width:32px; color:var(--fl-primary);"></span>
+									</div>
+									<h4 class="formlayer-empty-title">' . esc_html__('Unlock Email Confirmations', 'formlayer') . '</h4>
+									<p style="color:#64748b; margin:0 0 20px 0;">' . esc_html__('Automatically send a confirmation email to your users after they submit a form with FormLayer Pro.', 'formlayer') . '</p>
+									<a href="#" class="formlayer-btn formlayer-btn-primary">' . esc_html__('Go Pro', 'formlayer') . '</a>
+								</div>';
+							}
+
+							echo'</div>';
+						echo'<!-- Confirmations Section -->
 						<div class="formlayer-settings-section" id="formlayer-settings-confirmations" style="display:none;">
 							<div class="section-header">
 								<h3>' . esc_html__('Form Confirmations', 'formlayer') . '</h3>

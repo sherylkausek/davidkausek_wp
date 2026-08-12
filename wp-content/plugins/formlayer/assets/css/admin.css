@@ -4392,3 +4392,8 @@ background: #f1f5f9;
 border-color: #94a3b8; 
 color: #0f172a;
 }
+
+@keyframes fl_spin{
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}

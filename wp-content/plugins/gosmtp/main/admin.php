@@ -7,24 +7,38 @@ if(!defined('ABSPATH')){
 
 function gosmtp_admin_hooks(){
 	
-	if(current_user_can('manage_options') && !defined('SITEPAD')){
-		// === Plugin Update Notice === //
-		$plugin_update_notice = get_option('softaculous_plugin_update_notice', []);
-		$available_update_list = get_site_transient('update_plugins'); 
-		$plugin_path_slug = 'gosmtp/gosmtp.php';
+	if(!current_user_can('manage_options') || defined('SITEPAD')){
+		return;
+	}
 
-		if(
-			!empty($available_update_list) &&
-			is_object($available_update_list) &&
-			!empty($available_update_list->response) &&
-			!empty($available_update_list->response[$plugin_path_slug]) && 
-			(empty($plugin_update_notice) || empty($plugin_update_notice[$plugin_path_slug]) || (!empty($plugin_update_notice[$plugin_path_slug]) &&
-			version_compare($plugin_update_notice[$plugin_path_slug], $available_update_list->response[$plugin_path_slug]->new_version, '<')))
-		){
-			add_action('admin_notices', 'gosmtp_plugin_update_notice');
-			add_filter('softaculous_plugin_update_notice', 'gosmtp_plugin_update_notice_filter');
-		}
-		// === Plugin Update Notice === //
+	// === Plugin Update Notice === //
+	$plugin_update_notice = get_option('softaculous_plugin_update_notice', []);
+	$available_update_list = get_site_transient('update_plugins'); 
+	$plugin_path_slug = 'gosmtp/gosmtp.php';
+
+	if(
+		!empty($available_update_list) &&
+		is_object($available_update_list) &&
+		!empty($available_update_list->response) &&
+		!empty($available_update_list->response[$plugin_path_slug]) && 
+		(empty($plugin_update_notice) || empty($plugin_update_notice[$plugin_path_slug]) || (!empty($plugin_update_notice[$plugin_path_slug]) &&
+		version_compare($plugin_update_notice[$plugin_path_slug], $available_update_list->response[$plugin_path_slug]->new_version, '<')))
+	){
+		add_action('admin_notices', 'gosmtp_plugin_update_notice');
+		add_filter('softaculous_plugin_update_notice', 'gosmtp_plugin_update_notice_filter');
+	}
+	// === Plugin Update Notice === //
+
+	add_action('admin_enqueue_scripts', 'gosmtp_admin_enqueue');
+}
+
+function gosmtp_admin_enqueue(){
+	wp_register_style( 'gosmtp-admin', GOSMTP_URL .'/css/admin.css', array(), GOSMTP_VERSION);
+	wp_register_script( 'gosmtp-admin', GOSMTP_URL .'/js/admin.js', array('jquery'), GOSMTP_VERSION);
+	
+	if(isset($_GET['page']) && $_GET['page'] == 'gosmtp-ai-abilities'){
+		wp_register_style( 'gosmtp-abilities', GOSMTP_URL .'/css/abilities.css', array(), GOSMTP_VERSION);
+		wp_register_script( 'gosmtp-abilities', GOSMTP_URL .'/js/abilities.js', array('jquery'), GOSMTP_VERSION);
 	}
 }
 

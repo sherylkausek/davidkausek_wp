@@ -178,7 +178,8 @@ function backuply_admin_init(){
 	}
 
 	$litespeed_time = get_option('backuply_litespeed_notice', time());
-	if(extension_loaded('litespeed') && $litespeed_time <= time()){
+
+	if(backuply_is_litespeed() && $litespeed_time <= time()){
 		if(!file_exists(ABSPATH .'.htaccess') || !preg_match('/noabort/i', file_get_contents(ABSPATH .'.htaccess'))){
 			add_action('admin_notices', 'backuply_litespeed_handler');
 		}

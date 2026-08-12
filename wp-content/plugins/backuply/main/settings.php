@@ -612,8 +612,7 @@ function backuply_page_backup(){
 		$remote_backup_locs = (!empty($existing_backup_locs) ? $existing_backup_locs: array());
 		$location_id = (empty($remote_backup_locs) ? 1 : max(array_keys($remote_backup_locs)) + 1);
 
-		$dropbox = backuply_load_remote_backup('dropbox');
-		$proto_arr = ['dropbox', 'gdrive', 'aws', 'caws', 'onedrive', 'bcloud'];
+		$proto_arr = ['dropbox', 'gdrive', 'aws', 'caws', 'onedrive', 'bcloud', 'pcloud'];
 		
 		if(in_array($protocol, $proto_arr)){
 
@@ -764,6 +763,7 @@ function backuply_page_backup(){
 					exit;
 					
 				}else {
+					$dropbox = backuply_load_remote_backup('dropbox');
 					$dropbox_tokens = $dropbox->generate_dropbox_token($access_code);
 					$dropbox_access_token = $dropbox_tokens['access_token'];
 					$dropbox_refresh_token = $dropbox_tokens['refresh_token'];
@@ -775,6 +775,62 @@ function backuply_page_backup(){
 					$full_backup_loc = $protocol.'://'.$dropbox_refresh_token.$backup_loc;
 				}
 
+			} elseif ($protocol == 'pcloud'){
+				$access_code = backuply_optget('access_code');
+				$pcloud_host = backuply_optget('host');
+				
+				if(empty($access_code)){
+					$callback_uri = menu_page_url('backuply', false) . '&security='.wp_create_nonce('backuply_nonce');
+					
+					$url = 'https://api.backuply.com/pcloud/token.php?action=add_location&loc_name='.rawurlencode($loc_name).'&backup_loc='.rawurlencode($backup_loc).'&url='.rawurlencode($callback_uri).'&softtoken='.rawurlencode(backuply_csrf_get_token());
+					
+					backuply_redirect($url, false);
+					exit;
+				}else{
+					if(empty($pcloud_host)){
+						$error[] = __('Failed to add pCloud location, didn\'t got pcloud host', 'backuply');
+					}
+				}
+				
+				$pcloud = backuply_load_remote_backup('pcloud');
+				backuply_stream_wrapper_register($protocol, $protocol);
+
+				global $backuply_pcloud_folderid;
+				$backuply_pcloud_folderid = 0;
+				
+				$pcloud_access_token = $pcloud->get_access_token($access_code, $pcloud_host);
+				
+				if(empty($pcloud_access_token)){
+					$error[] = __('Did not got any access key', 'backuply');
+					return false;
+				}
+
+				$full_backup_loc = $protocol.'://'.rawurlencode($pcloud_access_token).'@'.rawurlencode($pcloud_host);
+
+				// Checking an creating the base folder
+				if(!@opendir($full_backup_loc)){
+					if(!@mkdir($full_backup_loc)){
+						$error[] = __('Failed to create a folder', 'backuply');
+					}
+				}
+
+				// Checking and creating the sub folder if Required.
+				if(!empty($backup_loc) && $backup_loc != '/'){
+					$full_backup_loc .= '/'. $backup_loc;
+
+					if(!@opendir($full_backup_loc)){
+						if(!@mkdir($full_backup_loc)){
+							$error[] = __('Failed to create the folder', 'backuply') . $backup_loc;
+						}
+					}
+				}
+
+				// Adding the Folder ID, where we will need to upload the file
+				// The structure of the backup location is
+				// pcloud://access_key@folderid-host/path
+				if(!empty($backuply_pcloud_folderid)){
+					$full_backup_loc = str_replace(rawurlencode($pcloud_host), $backuply_pcloud_folderid .'-'.rawurlencode($pcloud_host), $full_backup_loc);
+				}
 			}
 		}else{
 			// Server Host
@@ -830,7 +886,7 @@ function backuply_page_backup(){
 			}
 		}
 
-		if($protocol != 'dropbox' && $protocol != 'gdrive' && $protocol != 'webdav' && $protocol != 'aws' && $protocol != 'caws' && $protocol != 'onedrive' && $protocol != 'bcloud'){
+		if($protocol != 'dropbox' && $protocol != 'gdrive' && $protocol != 'webdav' && $protocol != 'aws' && $protocol != 'caws' && $protocol != 'onedrive' && $protocol != 'bcloud' && $protocol != 'pcloud'){
 			
 			//Connection established or not?
 			$ftp = backuply_sftp_connect($server_host, $ftp_user, $ftp_pass, $protocol, $port, false);
@@ -925,6 +981,10 @@ function backuply_page_backup(){
 				update_option('bcloud_key', $bcloud_keys['bcloud_key']);
 			}
 			
+		}elseif($protocol == 'pcloud'){
+			$remote_backup_locs[$location_id]['access_code'] = $access_code;
+			$remote_backup_locs[$location_id]['host'] = $pcloud_host;
+			$remote_backup_locs[$location_id]['folder_id'] = $backuply_pcloud_folderid; // TODO: remove if not needed in future.
 		}else{
 			$remote_backup_locs[$location_id]['server_host'] = $server_host;
 			$remote_backup_locs[$location_id]['port'] = $port;
@@ -2067,9 +2127,23 @@ if(file_exists(BACKUPLY_BACKUP_DIR . 'restoration/restoration.php')){
 						<?php esc_html_e('Start Self Diagnosis', 'backuply'); ?>
 					</button>
 					<button type="button" class="button button-secondary backuply-load-debug"><?php echo __('Load debug file', 'backuply');?></button>
-					<div class="backuply-diagnosis-result"></div>
-				</div>
+				<div class="backuply-diagnosis-result"></div>
 			</div>
+		</div>
+
+		<?php if(backuply_is_litespeed()){ ?>
+		<div class="backuply-diagnosis">
+			<h3><?php esc_html_e('LiteSpeed noabort', 'backuply');?></h3>
+			<div class="backuply-diagnosis-wrap">
+				<p><?php esc_html_e('LiteSpeed can kill long-running PHP processes (such as a backup) when the client connection goes away. Backuply adds a "noabort" rule to your root .htaccess to prevent this.', 'backuply'); ?></p>
+				<p><?php esc_html_e('Click the button below to scan your .htaccess and add the noabort rule if it is missing.', 'backuply'); ?></p>
+				<button type="button" class="button button-primary backuply-noabort-scan">
+					<?php esc_html_e('Scan & Fix LiteSpeed noabort', 'backuply'); ?>
+				</button>
+				<div class="backuply-noabort-result"></div>
+			</div>
+		</div>
+		<?php } ?>
 
 			You can contact the Backuply Team via email. Our email address is <a href="mailto:support@backuply.com">support@backuply.com</a> or through Our <a href="https://softaculous.deskuss.com/open.php?topicId=17" target="_blank">Support Ticket System</a>
 			<p>You can also check the docs <a href="https://backuply.com/docs/" target="_blank">https://backuply.com/docs/</a> to review some common issues. You might find something helpful there.</p>
@@ -2144,6 +2218,7 @@ if(file_exists(BACKUPLY_BACKUP_DIR . 'restoration/restoration.php')){
 						array('Backup To S3', false),
 						array('Backup To WebDAV', false),
 						array('Backup To S3 Compatible Storage', false),
+						array('Backup To pCloud', false),
 						array('Auto Backups', false),
 						array('Backup Rotation', false),
 						array('WP-CLI Support', false),

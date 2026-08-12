@@ -677,9 +677,9 @@ class gdrive{
 	
 	function refresh_token_func($refresh_token){
 		global $error;
-		
-		if(!empty($this->access_token)){
-			if((time() - 600) - ($this->access_generated_at + $this->expires_in) > 0){
+
+		if(!empty($this->access_token) && !empty($this->access_generated_at) && !empty($this->expires_in)){
+			if((time() + 300) < ($this->access_generated_at + $this->expires_in)){
 				return $this->access_token;
 			}
 		}

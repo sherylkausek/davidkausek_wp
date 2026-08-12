@@ -208,7 +208,7 @@ class Frontend{
 				if (is_string($options)) $options = explode("\n", $options);
 				
 				$html .= '<select name="' . esc_attr($name) . '" class="' . $input_class . '" ' . $required . ' ' . $input_style . ' style="width:100%;">';
-				$html .= '<option value="">' . esc_html($placeholder ? $placeholder : 'Select Option') . '</option>';
+				$html .= '<option value="">' . esc_html($placeholder ? $placeholder : __('Select Option', 'formlayer')) . '</option>';
 				foreach($options as $opt) {
 					$o = is_array($opt) ? $opt : ['label' => $opt, 'value' => $opt, 'default' => false];
 					$selected = ($default_value === $o['value'] || (empty($default_value) && !empty($o['default']))) ? 'selected' : '';
@@ -324,7 +324,7 @@ class Frontend{
 				$html .= '
 					<div class="formlayer-terms-wrap">
 						<input type="checkbox" name="' . esc_attr($name) . '" ' . $required . '>
-						<span class="formlayer-terms-label">' . wp_kses_post($raw_terms_label) . '</span>
+						<span class="formlayer-terms-label" ' . $label_style . '>' . wp_kses_post($raw_terms_label) . '</span>
 					</div>';
 				break;
 			case 'gdpr':
@@ -334,7 +334,7 @@ class Frontend{
 				<div class="formlayer-gdpr-wrap">
 					<input type="checkbox" name="' . esc_attr($name) . '" ' . $required . '>
 					<div class="formlayer-gdpr-info">
-						<div class="formlayer-gdpr-label">' . wp_kses_post($gdpr_label) . '</div>
+						<div class="formlayer-gdpr-label" ' . $label_style . '>' . wp_kses_post($gdpr_label) . '</div>
 						' . ($gdpr_desc ? '<div class="formlayer-gdpr-desc">' . wp_kses_post($gdpr_desc) . '</div>' : '') . '
 					</div>
 				</div>';
@@ -403,7 +403,10 @@ class Frontend{
 					if (!empty($field['url_validation'])) $extra_attrs .= ' data-validate-url="1"';
 					if (!empty($field['url_https_only'])) $extra_attrs .= ' data-https-only="1"';
 				}
-				$input_type = in_array($type, ['password', 'url', 'tel', 'hidden']) ? $type : 'text';
+				if ($type === 'phone' && empty($placeholder)) {
+					$placeholder = __('Phone Number', 'formlayer');
+				}
+				$input_type = in_array($type, ['password', 'url', 'tel', 'phone', 'hidden']) ? ($type === 'phone' ? 'tel' : $type) : 'text';
 				$html .= '<input type="' . esc_attr($input_type) . '" name="' . esc_attr($name) . '" class="' . $input_class . '" placeholder="' . esc_attr($placeholder) . '" value="' . esc_attr($default_value) . '" ' . $required . ' ' . $input_style . $extra_attrs . '>';
 				break;
 		}

@@ -9,7 +9,7 @@
 if (!defined('ABSPATH')) exit;
 
 define('GOSMTP_BASE', plugin_basename(GOSMTP_FILE));
-define('GOSMTP_VERSION', '1.2.0');
+define('GOSMTP_VERSION', '1.2.1');
 define('GOSMTP_DIR', dirname(GOSMTP_FILE));
 define('GOSMTP_SLUG', 'gosmtp');
 define('GOSMTP_URL', plugins_url('', GOSMTP_FILE));
@@ -102,6 +102,13 @@ function gosmtp_load_plugin(){
 	
 	$options = get_option('gosmtp_options', array());
 	$gosmtp->options = empty($options) ? array() : $options;
+
+	// Register GoSMTP FREE abilities with the WordPress 6.9+ Abilities API.
+	// Pro abilities are registered separately by the GoSMTP Pro plugin.
+	if(function_exists('wp_register_ability') && !empty($options['ai_abilities']) && !empty($options['ai_abilities']['enabled']) && class_exists('\GOSMTP\AbilitiesRegister')){
+		add_action('wp_abilities_api_categories_init', '\GOSMTP\AbilitiesRegister::register_categories');
+		add_action('wp_abilities_api_init', '\GOSMTP\AbilitiesRegister::register_abilities');
+	}
 }
 
 // The function that will be called when the plugin is loaded
@@ -252,6 +259,9 @@ function gosmtp_admin_menu() {
 	
 	// Test Mail Page
 	add_submenu_page( 'gosmtp', 'Test Mail', 'Test Mail', $capability, 'gosmtp#test-mail', 'gosmtp_page_handler');
+
+	// AI Abilities
+	add_submenu_page( 'gosmtp', __('AI Abilities', 'gosmtp'), __('AI Abilities', 'gosmtp') . ' <span  style="vertical-align:middle;background:#d63638;font-size:9px;padding:0 6px;border-radius:10px;line-height:18px;">New!</span>' , $capability, 'gosmtp-ai-abilities', 'gosmtp_ai_abilities');
 	
 	if(defined('GOSMTP_PREMIUM')){
 		
@@ -285,6 +295,12 @@ function gosmtp_page_handler(){
 	gosmtp_settings_page();
 }
 
+function gosmtp_ai_abilities(){
+	include_once GOSMTP_DIR .'/main/abilities.php';
+	\GOSMTP\Abilities::ui_abilities();
+}
+
+
 function gosmtp_logs_handler(){
 	include_once GOSMTP_PRO_DIR .'/main/smtp-logs.php';
 }
@@ -315,10 +331,8 @@ if(wp_doing_ajax()){
 }
 
 add_action( 'admin_init', 'gosmtp_admin_init');
+
 function gosmtp_admin_init(){
-	wp_register_style( 'gosmtp-admin', GOSMTP_URL .'/css/admin.css', array(), GOSMTP_VERSION);
-	wp_register_script( 'gosmtp-admin', GOSMTP_URL .'/js/admin.js', array('jquery'), GOSMTP_VERSION);
-	
 	include_once GOSMTP_DIR .'/main/admin.php';
 	
 	gosmtp_admin_hooks();

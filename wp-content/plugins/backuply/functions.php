@@ -959,7 +959,7 @@ function backuply_delete_backup($tar_file) {
 		if(!empty($backup_info->backup_location) && $backup_info->name == $bkey && array_key_exists($backup_info->backup_location, $backuply_remote_backup_locs)){
 
 			$backup_dir = $backuply_remote_backup_locs[$backup_info->backup_location]['full_backup_loc'];
-			$remote_stream_wrappers = array('dropbox', 'gdrive', 'softftpes', 'softsftp', 'webdav', 'aws', 'caws', 'onedrive', 'bcloud');
+			$remote_stream_wrappers = array('dropbox', 'gdrive', 'softftpes', 'softsftp', 'webdav', 'aws', 'caws', 'onedrive', 'bcloud', 'pcloud');
 
 			if(in_array($backuply_remote_backup_locs[$backup_info->backup_location]['protocol'], $remote_stream_wrappers)){
 
@@ -1149,7 +1149,7 @@ function backuply_sftp_connect($host, $username, $pass, $protocol = 'ftp', $port
 // Creates stream wrapper and includes the associated class
 function backuply_stream_wrapper_register($protocol, $classname){
 	
-	$protocols = array('dropbox', 'aws', 'caws', 'gdrive', 'softftpes', 'softsftp', 'webdav', 'onedrive', 'bcloud');
+	$protocols = array('dropbox', 'aws', 'caws', 'gdrive', 'softftpes', 'softsftp', 'webdav', 'onedrive', 'bcloud', 'pcloud');
 	
 	if(!in_array($protocol, $protocols)){
 		return true;
@@ -2027,31 +2027,80 @@ function backuply_verify_status_log(){
 	return false;
 }
 
+// Detects whether the current request is being served by LiteSpeed.
+// The litespeed PHP extension is not loaded on every LiteSpeed installation,
+// so we check the SAPI name and SERVER_SOFTWARE which are more reliable.
+function backuply_is_litespeed(){
+
+	if(function_exists('php_sapi_name') && stripos(php_sapi_name(), 'litespeed') !== false){
+		return true;
+	}
+
+	if(!empty($_SERVER['SERVER_SOFTWARE']) && stripos($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false){
+		return true;
+	}
+
+	return false;
+}
+
 // LiteSpeed kills long running processes, and backups need to run long
 // So we have to prevent the default behaviour of LiteSpeed by using noabort rule.
+// Scans the root .htaccess for the noabort rule and adds it if missing.
+// Returns true when the rule was added.
+// Returns an array with 'message' and 'type' ('info'|'error'|'success') otherwise.
 function backuply_add_litespeed_noabort(){
 
-	if(!extension_loaded('litespeed')){
-		return;
+	if(!backuply_is_litespeed()){
+		return array(
+			'message' => __('LiteSpeed is not running on this server. The noabort rule is not needed.', 'backuply'),
+			'type'    => 'info',
+		);
 	}
 
 	$htaccess_file = ABSPATH .'.htaccess';
 
-	if(!file_exists($htaccess_file) || !is_writable($htaccess_file)){
-		return;
+	if(!file_exists($htaccess_file)){
+		return array(
+			'message' => __('The root .htaccess file does not exist. Please create it and try again.', 'backuply'),
+			'type'    => 'error',
+		);
+	}
+
+	if(!is_writable($htaccess_file)){
+		return array(
+			'message' => __('The root .htaccess file is not writable. Please check the file permissions and try again.', 'backuply'),
+			'type'    => 'error',
+		);
 	}
 
 	$rules = file_get_contents($htaccess_file);
 
-	if(!preg_match('/noabort/i', $rules)){
-		$rules .= "\n". "\n";
-		$rules .= '# BEGIN LiteSpeed'."\n";
-		$rules .= '<IfModule Litespeed>'."\n";
-		$rules .= 'SetEnv noabort 1'."\n";
-		$rules .= '</IfModule>'."\n";
-		$rules .= '# END LiteSpeed'."\n";
-
-		file_put_contents($htaccess_file, $rules);
+	// Check the entire file so a manually-added rule is respected and not duplicated.
+	if(preg_match('/noabort/i', $rules)){
+		return array(
+			'message' => __('The noabort rule is already present in your .htaccess. No changes were made.', 'backuply'),
+			'type'    => 'success',
+		);
 	}
-	
+
+	$rules .= "\n". "\n";
+	$rules .= '# BEGIN Backuply LiteSpeed'."\n";
+	$rules .= '<IfModule Litespeed>'."\n";
+	$rules .= 'SetEnv noabort 1'."\n";
+	$rules .= '</IfModule>'."\n";
+	$rules .= '# END Backuply LiteSpeed'."\n";
+
+	$written = file_put_contents($htaccess_file, $rules);
+
+	if($written === false){
+		return array(
+			'message' => __('Could not write the noabort rule to your .htaccess. Please check the file permissions.', 'backuply'),
+			'type'    => 'error',
+		);
+	}
+
+	return array(
+		'message' => __('The noabort rule was missing and has been added to your .htaccess.', 'backuply'),
+		'type'    => 'success',
+	);
 }

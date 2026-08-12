@@ -4,11 +4,11 @@ Tags: backup, restore, database backup, cloud backup, wordpress backup, migratio
 Requires at least: 4.7
 Tested up to: 7.0
 Requires PHP: 5.5
-Stable tag: 1.5.4
+Stable tag: 1.5.6
 License: LGPL v2.1
 License URI: http://www.gnu.org/licenses/lgpl-2.1.html
 
-Backup, restores, and migration with Backuply are fairly simple with a wide range of storage options from Local Backups, FTP to cloud options like AWS S3, Dropbox, Google Drive, SFTP, FTPS, WebDav.
+Backup, restores, and migration with Backuply are fairly simple with a wide range of storage options from Local Backups, FTP to cloud options like AWS S3, Dropbox, Google Drive, SFTP, FTPS, WebDAV, pCloud.
 
 == Description ==
 
@@ -44,6 +44,7 @@ You can find our official documentation at [https://backuply.com/docs](https://b
 * **Backup to Microsoft One Drive**
 * **Backup to Amazon S3**
 * **Backup to WebDAV**
+* **Backup to pCloud**
 * **Backup to S3 Compatible Storages:** Added support for DigitalOcean Spaces, Linode Object Storage, Vultr Object Storage, and Cloudflare R2.
 * **Support for WP-CLI:** You can use Backuply through WP-CLI
 * **Professional Support:** Get professional support and more features to make backup your website with [Backuply](https://backuply.com/pricing)
@@ -84,6 +85,15 @@ Go To your WordPress install -> Plugins -> Add New Button -> In Search Box searc
 7. **Backup Process** easy to understand backup progress.
 
 == Changelog ==
+
+= 1.5.6 =
+* [Bug-Fix] There was an issue related to Windows path that has been fixed, reported by "Youssef EL MSIYAH"
+
+= 1.5.5 =
+* [Feature Pro] pCloud Backup location support added.
+* [Improvement] noabort rule for LiteSpeed cache was added earlier if litespeed PHP extension was present, now it adds based on PHP SAPI or SERVER_SOFTWARE.
+* [Improvement] Option to scan and add LiteSpeed noabort rule added to Backuply support tab.
+* [Bug-Fix] There was a Google Drive access token cache issue, that has been fixed.
 
 = 1.5.4 (21st July 2026) =
 * [Feature Pro] Option to trigger Backup when updating WordPress Core.

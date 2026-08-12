@@ -3,7 +3,7 @@
 Plugin Name: Backuply
 Plugin URI: http://wordpress.org/plugins/backuply/
 Description: Backuply is a Wordpress Backup plugin. Backups are the best form of security and safety a website can have.
-Version: 1.5.4
+Version: 1.5.6
 Author: Softaculous
 Author URI: https://backuply.com
 License: LGPL v2.1

@@ -6,66 +6,59 @@ if(!defined('ABSPATH')){
 
 echo '
 <style>
-.backuply_button {
-background-color: #4CAF50; /* Green */
-border: none;
-color: white;
-padding: 8px 16px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-font-size: 16px;
-margin: 4px 2px;
--webkit-transition-duration: 0.4s; /* Safari */
-transition-duration: 0.4s;
-cursor: pointer;
-}
 
-.backuply_button:focus{
-border: none;
-color: white;
-}
-
-.backuply_button1 {
-color: white;
+.wp-core-ui .backuply_button1 {
 background-color: #4CAF50;
-border:3px solid #4CAF50;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button1:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
-border:3px solid #4CAF50;
+.wp-core-ui .backuply_button1:hover {
+background-color:#3b963f;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button2 {
-color: white;
+.wp-core-ui .backuply_button2 {
 background-color: #0085ba;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button2:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
+.wp-core-ui .backuply_button2:hover {
+background-color: #0175a3;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button3 {
-color: white;
+.wp-core-ui .backuply_button3 {
 background-color: #365899;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button3:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
+.wp-core-ui .backuply_button3:hover {
+border-color: transparent;
+background-color: #274785;
+color:#fff;
 }
 
-.backuply_button4 {
-color: white;
-background-color: rgb(66, 184, 221);
+.wp-core-ui .backuply_button4 {
+background-color: #14171A;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.backuply_button4:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
+.wp-core-ui .backuply_button4:hover {
+background-color: #24292E;
+color: #fff;
+border-color: transparent;
 }
 
 .backuply_promo-close{
@@ -217,10 +210,10 @@ function backuply_base_promo(){
 			If you like our plugin would you please show some love by doing actions like
 			</p>
 			<p>
-				<a class="backuply_button backuply_button1" target="_blank" href="https://backuply.com/pricing">Upgrade to Pro</a>
-				<a class="backuply_button backuply_button2" target="_blank" href="https://wordpress.org/support/view/plugin-reviews/backuply">Rate it 5★\'s</a>
-				<a class="backuply_button backuply_button3" target="_blank" href="https://www.facebook.com/backuply/">Like Us on Facebook</a>
-				<a class="backuply_button backuply_button4" target="_blank" href="https://twitter.com/intent/tweet?text='.rawurlencode('I use @wpbackuply to backup my #WordPress site - https://backuply.com').'">Tweet about Backuply</a>
+				<a class="button backuply_button1" target="_blank" href="https://backuply.com/pricing">Upgrade to Pro</a>
+				<a class="button backuply_button2" target="_blank" href="https://wordpress.org/support/view/plugin-reviews/backuply">Rate it 5★\'s</a>
+				<a class="button backuply_button3" target="_blank" href="https://www.facebook.com/backuply/">Like Us on Facebook</a>
+				<a class="button backuply_button4" target="_blank" href="https://x.com/intent/post?text='.rawurlencode('I use @wpbackuply to backup my #WordPress site - https://backuply.com').'"><img src="'.esc_url(BACKUPLY_URL).'/assets/images/x-logo-white.svg'.'" height="12"/> Post About Backuply on X</a>
 			</p>
 	</td>
 	</tr>

@@ -869,7 +869,8 @@ padding:5px 3px;
 margin-bottom: 1em;
 }
 
-.backuply-diagnosis-result{
+.backuply-diagnosis-result,
+.backuply-noabort-result{
 margin: 10px 0px;
 padding: 10px;
 display: none;

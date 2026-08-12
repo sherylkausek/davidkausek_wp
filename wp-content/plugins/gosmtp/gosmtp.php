@@ -3,7 +3,7 @@
 Plugin Name: GoSMTP
 Plugin URI: https://gosmtp.net
 Description: Send emails from your WordPress site using your preferred SMTP provider like Gmail, Outlook, AWS, Zoho, SMTP.com, Brevo (formerly Sendinblue), Mailgun, Postmark, Sendgrid, Sparkpost, Sendlayer or any custom SMTP provider.
-Version: 1.2.0
+Version: 1.2.1
 Author: Softaculous Team
 Author URI: https://softaculous.com
 Text Domain: gosmtp

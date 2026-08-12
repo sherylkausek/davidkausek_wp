@@ -1387,10 +1387,11 @@ class backuply_tar{
 	// {{{ _maliciousFilename()
 	function _maliciousFilename($file)
 	{
-		if (strpos($file, '/../') !== false) {
+		$normalized = str_replace('\\', '/', $file);
+		if(strpos($normalized, '/../') !== false){
 			return true;
 		}
-		if (strpos($file, '../') === 0) {
+		if (strpos($normalized, '../') === 0) {
 			return true;
 		}
 		return false;
